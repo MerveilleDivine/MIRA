@@ -23,13 +23,26 @@ const loadDataFromLocalstorage = () => {
     chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to bottom of the chat container
 }
 
-const createChatElement = (content, className) => {
-    // Create new div and apply chat, specified class and set html content of div
+const createChatElement = (content, role) => {
     const chatDiv = document.createElement("div");
-    chatDiv.classList.add("chat", className);
-    chatDiv.innerHTML = content;
-    return chatDiv; // Return the created chat div
-}
+    chatDiv.classList.add("chat");
+  
+    if (role === "user") {
+      chatDiv.classList.add("outgoing");
+    } else if (role === "bot") {
+      chatDiv.classList.add("incoming");
+    }
+  
+    chatDiv.innerHTML = `
+      <div class="chat-content">
+        <div class="chat-details">
+          ${content}
+        </div>
+      </div>
+    `;
+  
+    return chatDiv;
+  }
 
 const getChatResponse = async (incomingChatDiv) => {
     const API_URL = "https://api.openai.com/v1/completions";
@@ -97,35 +110,78 @@ const showTypingAnimation = () => {
 }
 
 const handleOutgoingChat = () => {
-    userText = chatInput.value.trim(); // Get chatInput value and remove extra spaces
-    if(!userText) return; // If chatInput is empty return from here
-
-    // Clear the input field and reset its height
-    chatInput.value = "";
-    chatInput.style.height = `${initialInputHeight}px`;
-
-    const html = `<div class="chat-content">
-                    <div class="chat-details">
-                        <img src="images/user.jpg" alt="user-img">
-                        <p>${userText}</p>
-                    </div>
-                </div>`;
-
-    // Create an outgoing chat div with user's message and append it to chat container
-    const outgoingChatDiv = createChatElement(html, "outgoing");
-    chatContainer.querySelector(".default-text")?.remove();
+    const userText = chatInput.value.trim();
+    if (!userText) return;
+  
+    const outgoingChatDiv = createChatElement(userText, "outgoing");
     chatContainer.appendChild(outgoingChatDiv);
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    setTimeout(showTypingAnimation, 500);
-}
-
-deleteButton.addEventListener("click", () => {
+  
+    $.ajax({
+      url: 'http://localhost:5001/chatbot',
+      type: 'POST',
+      data: { message: userText },
+      success: function(response) {
+        const responseData = JSON.parse(response);
+        const incomingChatDiv = createChatElement(responseData.output, 'incoming');
+        chatContainer.appendChild(incomingChatDiv);
+        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      },
+      error: function(xhr, status, error) {
+        console.error('Error:', error);
+        // Handle error (e.g., display error message to the user)
+      }
+    });
+  
+    chatInput.value = "";
+    chatInput.style.height = "auto";
+  }
+/*deleteButton.addEventListener("click", () => {
     // Remove the chats from local storage and call loadDataFromLocalstorage function
     if(confirm("Are you sure you want to delete all the chats?")) {
         localStorage.removeItem("all-chats");
         loadDataFromLocalstorage();
     }
-});
+})*/;
+
+sendButton.addEventListener("click", handleOutgoingChat);
+// Function to handle speech recognition
+const handleSpeechRecognition = () => {
+    const recognition = new window.webkitSpeechRecognition(); // Create a new SpeechRecognition object
+
+    // Start speech recognition
+    recognition.start();
+
+    // Event listener to capture speech recognition results
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript; // Get the recognized transcript
+        chatInput.value = transcript; // Set the chat input value to the recognized transcript
+    };
+
+    // Event listener to handle speech recognition errors
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        // Handle error (e.g., display error message to the user)
+    };
+};
+
+micButton.addEventListener("click", handleSpeechRecognition);
+
+const appendChatMessage = (message, role) => {
+    const chatDiv = document.createElement("div");
+    chatDiv.classList.add("chat", role === 'user' ? 'outgoing' : 'incoming');
+    chatDiv.innerHTML = `
+        <div class="chat-content">
+            <div class="chat-details">
+                <img src="${role === 'user' ? 'images/user.jpg' : 'images/chatbot.jpg'}" alt="${role === 'user' ? 'user-img' : 'chatbot-img'}">
+                <p>${message}</p>
+            </div>
+        </div>`;
+    chatContainer.appendChild(chatDiv);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+};
+
+sendButton.addEventListener("click", handleOutgoingChat);
 
 const toggleTheme = () => {
     document.body.classList.toggle('dark-theme')
@@ -141,11 +197,10 @@ themeButton.addEventListener("click", () => {
 
 const initialInputHeight = chatInput.scrollHeight;
 
-chatInput.addEventListener("input", () => {   
+chatInput.addEventListener("input", () => {
     // Adjust the height of the input field dynamically based on its content
-    chatInput.style.height =  `${initialInputHeight}px`;
     chatInput.style.height = `${chatInput.scrollHeight}px`;
-});
+  });
 
 chatInput.addEventListener("keydown", (e) => {
     // If the Enter key is pressed without Shift and the window width is larger 
@@ -155,6 +210,7 @@ chatInput.addEventListener("keydown", (e) => {
         handleOutgoingChat();
     }
 });
+
 
 loadDataFromLocalstorage();
 sendButton.addEventListener("click", handleOutgoingChat);
