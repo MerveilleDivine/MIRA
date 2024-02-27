@@ -264,7 +264,7 @@ span.material-symbols-rounded {
 }
 
 .tile {
-    background-color: #f0f0f0;
+    background-color: #1f020229;
     border-radius: 5px;
     padding: 20px;
     width: 300px;
@@ -273,10 +273,27 @@ span.material-symbols-rounded {
     cursor: pointer;
     transition: transform 0.3s;
 }
+.tile h2, .tile p {
+    color: white;
+  }
 
 .tile:hover {
     transform: translateY(-10px);
 }
+
+.clickable-tiles a {
+    text-decoration: none;}
+    
+.assist-text {
+    text-align: center;
+    margin-top: 30px; /* Adjust as needed */
+}
+
+.assist-heading {
+    font-size: 36px; /* Adjust as needed */
+    animation: fadeInUp 1.5s ease; /* Add animation */
+}
+
 header {
     background-color: #333;
     padding: 20px;
