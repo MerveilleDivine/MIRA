@@ -253,3 +253,5 @@ voiceButton.addEventListener('click', () => {
     });
   });
 });
+const conversation = document.querySelector('.conversation');
+

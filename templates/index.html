@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>MIRA exam prep assistant</title>
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Google Fonts Link For Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Q5ysp7hFCukmwbh/qy8JiZ14o7D74sdDnDu4pNupzLPG6Xrj7G/ETUKsOiKP6Qjq5v7Mv2XOcbtPCp5z6bECOg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZVj0nMSkhACEbttAr4Pasoyo Tamb/w+W87suzpU12fkkLQTG4cGnLqzWG8PS521TBUK2/XJD8+jK/XlGg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Q5ysp7hFCukmwbh/qy8JiZ14o7D74sdDnDu4pNupzLPG6Xrj7G/ETUKsOiKP6Qjq5v7Mv2XOcbtPCp5z6bECOg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Fo3rlrZVj0nMSkhACEbttAr4Pasoyo Tamb/w+W87suzpU12fkkLQTG4cGnLqzWG8PS521TBUK2/XJD8+jK/XlGg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  </head>
-  <body>
+
+</head>
+
+<body>
     <header>
-       
-        <nav> 
-            <h1>MIRA</h1>
+
+        <nav>
+            <button class="mira-button" onclick="location.reload()">
+               <span> <h1 class="mira-heading">MIRA</h1></span>
+            </button>
             <ul>
                 <li><a href="summarize.html"><img src="static/images/account.png" alt="account icon"></a></li>
                 <li><a href="questions.html"><img src="static/images/information.png" alt="help icon"></a></li>
@@ -26,51 +35,65 @@
         </nav>
     </header>
     <!-- Chats container -->
-    <div class="chat-container"></div>
-    <div class="assist-text">
-        <h1 class="assist-logo"><img src="static/images/letter-m.png" alt="logo b&w"></h1>
-        <h1 class="assist-heading">How can I assist you?</h1>
+    <div class="chats ">
+        <div class="chat-container conversation conversation-content conversation-start">
+            <div class="assist-text">
+                <h1 class="assist-logo"><span><img src="static/images/letter-m.png" alt="logo b&w"></span></h1>
+                <div class="assist-text typing-animation">
+                  <!-- <h1 class="assist-heading">Hey,there</h1> -->  
+                    <h1 class="assist-heading typing-animation">How can I assist you?</h1>
+                </div>
+            </div>
+
+            <!-- Clickable tiles section -->
+            <section class="clickable-tiles">
+                <div class="tile">
+                    <a href="summarize.html">
+                        <p class="tile-content"><img src="static/images/summary.png" alt="summary icon"></p>
+                        <h2>Summarize</h2>
+                        <p>Condense lengthy study materials into concise summaries, focusing on essential points and key
+                            concepts.</p>
+                    </a>
+                </div>
+                <div class="tile">
+                    <a href="questions.html">
+                        <p class="tile-content"><img src="static/images/ask.png" alt="ask icon"></p>
+                        <h2>Questions</h2>
+                        <p>Automatically generate interactive exam-style questions based on your preferences, covering
+                            various topics and difficulty levels.</p>
+                    </a>
+                </div>
+                <div class="tile">
+                    <a href="feedback.html">
+                        <p class="tile-content"><img src="static/images/satisfaction.png" alt="feedback icon"></p>
+                        <h2>Feedback</h2>
+                        <p>Provide you with tailored feedback based on your performance in practice exams and quizzes.
+                            Help
+                            you identify areas of strength and weakness.</p>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <!-- Typing container -->
+        <div class="typing-container">
+            <div class="typing-content">
+                <div class="typing-textarea">
+                    <textarea id="chat-input" spellcheck="false" placeholder="Send a message" required></textarea>
+                    <span id="send-btn" class="material-symbols-rounded">send</span>
+                </div>
+                <div class="typing-controls">
+                    <span id="send-btn" class="material-symbols-rounded">stop</span>
+                    <span id="mic-btn" class="material-symbols-rounded">mic</span>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- Clickable tiles section -->
-    <section class="clickable-tiles">
-        <div class="tile">
-            <a href="summarize.html">
-                <p class="tile-content"><img src="static/images/summary.png" alt="summary icon"></p>
-                <h2>Summarize</h2>
-                <p>Condense lengthy study materials into concise summaries, focusing on essential points and key concepts.</p>
-            </a>
-        </div>
-        <div class="tile">
-            <a href="questions.html">
-                <p class="tile-content"><img src="static/images/ask.png" alt="ask icon"></p>
-                <h2>Questions</h2>
-                <p>Automatically generate interactive exam-style questions based on your preferences, covering various topics and difficulty levels.</p>
-            </a>
-        </div>
-        <div class="tile">
-            <a href="feedback.html">
-                <p class="tile-content"><img src="static/images/satisfaction.png" alt="feedback icon"></p>
-                <h2>Feedback</h2>
-                <p>Provide you with tailored feedback based on your performance in practice exams and quizzes. Help you identify areas of strength and weakness.</p>
-            </a>
-        </div>
-    </section>
-    
-    <!-- Typing container -->
-    <div class="typing-container">
-      <div class="typing-content">
-        <div class="typing-textarea">
-          <textarea id="chat-input" spellcheck="false" placeholder="Send a message" required></textarea>
-          <span id="send-btn" class="material-symbols-rounded">send</span>
-        </div>
-        <div class="typing-controls">
-          <span id="send-btn" class="material-symbols-rounded">stop</span>
-          <span id="mic-btn" class="material-symbols-rounded">mic</span>
-      </div>
-    </div>
+    <!-- Chat messages display area -->
 
-   <!-- <div class="history">
+    <!-- <div class="history">
         <div class="header">
           <button id="newChatButton">New Chat</button>
         </div>
@@ -95,5 +118,6 @@
     </div>-->
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+</body>
+
 </html>

@@ -7,7 +7,7 @@
   font-family: "Poppins", sans-serif;
 }
 :root {
-  --text-color: #FFFFFF;
+  --text-color: #070707;
   --icon-color: #ACACBE;
   --icon-hover-bg: #051db5;
   --placeholder-color: #dcdcdc;
@@ -278,7 +278,7 @@ span.material-symbols-rounded {
     transition: transform 0.3s;
 }
 .tile h2, .tile p {
-    color: white;
+    color: var(--text-color);
   }
 
 .tile:hover {
@@ -367,8 +367,9 @@ nav a {
     text-decoration: none;
 }
 nav a img {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
+    margin-top: 20px;
 }
 nav a:hover {
     color: #ccc;
@@ -439,4 +440,158 @@ nav a:hover {
   .history .date-group li {
     padding: 5px 0;
   }
-  
+
+  .typing-machine {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing-machine 2s steps(40, end) infinite;
+}
+
+@keyframes typing-machine {
+    0% {
+        width: 0;
+    }
+    5% {
+        width: 0;
+    }
+    10% {
+        width: 100%;
+    }
+    60% {
+        width: 100%;
+    }
+    80% {
+        width: 0;
+    }
+    100% {
+        width: 0;
+    }
+}
+.typing-animation {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing-animation 3s steps(40, end);
+    letter-spacing: 0.1em;
+
+}
+
+@keyframes typing-animation {
+    0% {
+        width: 0;
+    }
+    5% {
+        width: 0;
+    }
+    10% {
+        width: 0%;
+    }
+    70% {
+        width: 100%;
+    }
+    80% {
+        width: 100%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+.mira-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+.mira-heading {
+    font-size: 3em;
+    display: inline-block;
+    position: relative;
+    color: var(--text-color);
+}
+
+.mira-heading span {
+    display: inline-block;
+    position: relative;
+    animation: assist-logo-bounce 2s infinite;
+}
+
+@keyframes assist-logo-bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.conversation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.conversation.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.conversation .chat-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.conversation .chat-container .chat-message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.conversation .chat-container .chat-message .chat-text {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.conversation .chat-container .chat-message .chat-sender {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.conversation {
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+
