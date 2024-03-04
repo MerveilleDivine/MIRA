@@ -9,11 +9,11 @@
 :root {
   --text-color: #FFFFFF;
   --icon-color: #ACACBE;
-  --icon-hover-bg: #5b5e71;
+  --icon-hover-bg: #051db5;
   --placeholder-color: #dcdcdc;
-  --outgoing-chat-bg: #343541;
-  --incoming-chat-bg: #444654;
-  --outgoing-chat-border: #343541;
+  --outgoing-chat-bg: #444654;
+  --incoming-chat-bg: #505156;
+  --outgoing-chat-border: #1b2492;
   --incoming-chat-border: #444654;
 }
 .light-mode {
@@ -153,7 +153,9 @@ span.material-symbols-rounded {
   position: fixed;
   bottom: 0;
   width: 100%;
+  overflow-y: auto;
   display: flex;
+  z-index: 100;
   padding: 20px 10px;
   justify-content: center;
   background: var(--outgoing-chat-bg);
@@ -261,6 +263,7 @@ span.material-symbols-rounded {
     justify-content:space-around;
     flex-wrap: wrap;
     padding: 20px;
+  
     
 }
 
@@ -308,10 +311,37 @@ span.material-symbols-rounded {
     height: 70px;
 }
 
-header {
-    background-color: #333;
-    padding: 20px;
+.assist-logo span {
+    display: inline-block;
+    position: relative;
 }
+
+.assist-logo span {
+    display: inline-block;
+    position: relative;
+    animation: assist-logo-bounce 1.5s 2;
+}
+
+@keyframes assist-logo-bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+header {
+    background-color:(0, 0, 0, 0.5);
+    padding: 10px;
+    height: 80px;
+}
+
 
 header h1 {
     color: #fff;
@@ -337,8 +367,8 @@ nav a {
     text-decoration: none;
 }
 nav a img {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
 }
 nav a:hover {
     color: #ccc;
