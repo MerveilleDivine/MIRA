@@ -258,7 +258,7 @@ span.material-symbols-rounded {
 }
 .clickable-tiles {
     display: flex;
-    justify-content: flex-end;
+    justify-content:space-around;
     flex-wrap: wrap;
     padding: 20px;
     
@@ -282,12 +282,17 @@ span.material-symbols-rounded {
     transform: translateY(-10px);
 }
 
+.tile a p img {
+    width: 40px;
+    height: 40px;
+}
+
 .clickable-tiles a {
     text-decoration: none;}
 
 .assist-text {
     text-align: center;
-    margin-top: 20px; /* Adjust as needed */
+    margin-top: none; /* Adjust as needed */
 }
 
 .assist-heading {
@@ -296,6 +301,11 @@ span.material-symbols-rounded {
     font-family: 'Roboto', sans-serif;
     padding: 20px;
     color: #020b1a;
+}
+
+.assist-logo img {
+    width: 70px;
+    height: 70px;
 }
 
 header {
@@ -326,7 +336,10 @@ nav a {
     color: #fff;
     text-decoration: none;
 }
-
+nav a img {
+    width: 42px;
+    height: 42px;
+}
 nav a:hover {
     color: #ccc;
 }

@@ -214,3 +214,42 @@ chatInput.addEventListener("keydown", (e) => {
 
 loadDataFromLocalstorage();
 sendButton.addEventListener("click", handleOutgoingChat);
+
+// Initialize the SpeechRecognition API
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = true;
+
+// Select the voice button
+const voiceButton = document.getElementById('voice-button');
+
+// Add a click event listener to the voice button
+voiceButton.addEventListener('click', () => {
+  // Start the speech recognition
+  recognition.start();
+
+  // Add a result event listener to the recognition object
+  recognition.addEventListener('result', (e) => {
+    // Get the transcript from the speech recognition result
+    const transcript = e.results[0][0].transcript;
+
+    // Send the transcript to the Flask app using a fetch request
+    fetch('/speech-recognition', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ transcript })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response from the Flask app
+      console.log(data);
+    })
+    .catch(error => {
+      // Handle any errors
+      console.error(error);
+    });
+  });
+});

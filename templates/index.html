@@ -19,16 +19,16 @@
         <nav> 
             <h1>MIRA</h1>
             <ul>
-                <li><a href="summarize.html"><img src="/images/account.png" alt="account icon"></a></li>
-                <li><a href="questions.html"><img src="/images/ask.png" alt="help icon"></a></li>
-                <li><a href=".html"><img src="/images/menu.png" alt="menu icon"></a></li>
+                <li><a href="summarize.html"><img src="static/images/account.png" alt="account icon"></a></li>
+                <li><a href="questions.html"><img src="static/images/information.png" alt="help icon"></a></li>
+                <li><a href=".html"><img src="static/images/menu.png" alt="menu icon"></a></li>
             </ul>
         </nav>
     </header>
     <!-- Chats container -->
     <div class="chat-container"></div>
     <div class="assist-text">
-        <h1 class="assist-logo"><img src="/images/letter-m.png" alt="logo b&w"></h1>
+        <h1 class="assist-logo"><img src="static/images/letter-m.png" alt="logo b&w"></h1>
         <h1 class="assist-heading">How can I assist you?</h1>
     </div>
 
@@ -36,18 +36,21 @@
     <section class="clickable-tiles">
         <div class="tile">
             <a href="summarize.html">
+                <p class="tile-content"><img src="static/images/summary.png" alt="summary icon"></p>
                 <h2>Summarize</h2>
                 <p>Condense lengthy study materials into concise summaries, focusing on essential points and key concepts.</p>
             </a>
         </div>
         <div class="tile">
             <a href="questions.html">
+                <p class="tile-content"><img src="static/images/ask.png" alt="ask icon"></p>
                 <h2>Questions</h2>
                 <p>Automatically generate interactive exam-style questions based on your preferences, covering various topics and difficulty levels.</p>
             </a>
         </div>
         <div class="tile">
             <a href="feedback.html">
+                <p class="tile-content"><img src="static/images/satisfaction.png" alt="feedback icon"></p>
                 <h2>Feedback</h2>
                 <p>Provide you with tailored feedback based on your performance in practice exams and quizzes. Help you identify areas of strength and weakness.</p>
             </a>
@@ -67,7 +70,7 @@
       </div>
     </div>
 
-    <div class="history">
+   <!-- <div class="history">
         <div class="header">
           <button id="newChatButton">New Chat</button>
         </div>
@@ -89,7 +92,7 @@
         </div>
       </div>
       
-    </div>
+    </div>-->
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
