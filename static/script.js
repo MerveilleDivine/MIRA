@@ -313,3 +313,43 @@ voiceButton.addEventListener('click', () => {
 });
 const conversation = document.querySelector('.conversation');
 
+
+document.addEventListener('DOMContentLoaded', function() {
+  let logoFadedOut = false;
+
+  setTimeout(function() {
+    // Add the fade-out class to the logo
+    document.querySelector('.mira-logo').classList.add('fade-out');
+  }, 2000);
+
+  // Check if the logo has faded out
+  const checkLogoFadeOut = setInterval(function() {
+    if (document.querySelector('.mira-logo').classList.contains('fade-out')) {
+      if (!logoFadedOut) {
+        logoFadedOut = true;
+        document.querySelector('.mira-logo').remove();
+        document.querySelector('.login-container').style.display = 'block';
+      }
+    }
+  }, 100);
+
+  // Remove the logo if it has already faded out
+  if (logoFadedOut) {
+    document.querySelector('.mira-logo').remove();
+    document.querySelector('.login-container').style.display = 'block';
+  }
+});
+
+const modeToggle = document.getElementById('mode-toggle');
+const body = document.body;
+
+// Check if the user has a preference for dark mode
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  body.classList.add('dark-mode');
+}
+
+// Toggle the classes on button click
+modeToggle.addEventListener('click', () => {
+  body.classList.toggle('light-mode');
+  body.classList.toggle('dark-mode');
+});

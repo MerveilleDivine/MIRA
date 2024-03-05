@@ -7,29 +7,49 @@
   font-family: "Poppins", sans-serif;
 }
 :root {
-  --text-color: #070707;
-  --icon-color: #ACACBE;
-  --icon-hover-bg: #051db5;
-  --placeholder-color: #dcdcdc;
-  --outgoing-chat-bg: #444654;
-  --incoming-chat-bg: #505156;
-  --outgoing-chat-border: #1b2492;
-  --incoming-chat-border: #444654;
+  /* Light Mode */
+--primary-background-color: #FFFFFF;
+--text-color: #333333;
+--primary-accent-color: #007BFF;
+--secondary-accent-color: #28A745;
+--error-alert-color: #DC3545;
+
+/* Dark Mode */
+--primary-background-color-dark: #1F2327;
+--text-color-dark: #F5F5F5;
+--primary-accent-color-dark: #007BFF;
+--secondary-accent-color-dark: #28A745;
+--error-alert-color-dark: #FFC107;
+
+/* Additional Colors */
+--link-color: #007BFF;
+--link-hover-color: #0056b3;
+--button-bg: #007BFF;
+--button-text-color: #FFFFFF;
+--button-hover-bg: #0056b3;
+--button-hover-text-color: #FFFFFF;
+--border-color: #E0E0E0;
+
 }
 .light-mode {
-  --text-color: #343541;
-  --icon-color: #a9a9bc;
-  --icon-hover-bg: #f1f1f3;
-  --placeholder-color: #6c6c6c;
-  --outgoing-chat-bg: #FFFFFF;
-  --incoming-chat-bg: #F7F7F8;
-  --outgoing-chat-border: #FFFFFF;
-  --incoming-chat-border: #D9D9E3;
-}
-body {
-  background: var(--outgoing-chat-bg);
+  --primary-bg: #F5F5F5;
+  --primary-text: #333333;
+  --secondary-bg: #007BFF;
+  --secondary-text: #FFFFFF;
+  --error-alert: #DC3545;
 }
 
+.dark-mode {
+  --primary-bg: #1F2327;
+  --primary-text: #F5F5F5;
+  --secondary-bg: #007BFF;
+  --secondary-text: #F5F5F5;
+  --error-alert: #FFC107;
+}
+body {
+  background: var(--primary-bg);
+  color: var(--primary-text);
+}
 /* Chats container styling */
 .chat-container {
   overflow-y: auto;
@@ -40,11 +60,11 @@ body {
   width: 6px;
 }
 :where(.chat-container, textarea)::-webkit-scrollbar-track {
-  background: var(--incoming-chat-bg);
+  background: var(--primary-bg);
   border-radius: 25px;
 }
 :where(.chat-container, textarea)::-webkit-scrollbar-thumb {
-  background: var(--icon-color);
+  background: var(--primary-background-color);
   border-radius: 25px;
 }
 .default-text {
@@ -55,7 +75,7 @@ body {
   height: 70vh;
   padding: 0 10px;
   text-align: center;
-  color: var(--text-color);
+  color: var(--primary-text);
 }
 .default-text h1 {
   font-size: 3.3rem;
@@ -71,12 +91,12 @@ body {
   color: var(--text-color);
 }
 .chat-container .chat.outgoing {
-  background: var(--outgoing-chat-bg);
-  border: 1px solid var(--outgoing-chat-border);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-bg);
 }
 .chat-container .chat.incoming {
-  background: var(--incoming-chat-bg);
-  border: 1px solid var(--incoming-chat-border);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-bg);
 }
 .chat .chat-content {
   display: flex;
@@ -92,7 +112,9 @@ span.material-symbols-rounded {
 .chat .chat-content span {
   cursor: pointer;
   font-size: 1.3rem;
-  color: var(--icon-color);
+  color: var(--primary-text);
+  margin: 0 10px;
+  transition: all 0.3s ease;
   visibility: hidden;
 }
 .chat:hover .chat-content:not(:has(.typing-animation), :has(.error)) span {
@@ -113,11 +135,11 @@ span.material-symbols-rounded {
   white-space: pre-wrap;
   font-size: 1.05rem;
   padding: 0 50px 0 25px;
-  color: var(--text-color);
+  color: var(--primary-text);
   word-break: break-word;
 }
 .chat .chat-details p.error {
-  color: #e55865;
+  color: var(--error-alert-color);
 }
 .chat .typing-animation {
   padding-left: 25px;
@@ -159,7 +181,7 @@ span.material-symbols-rounded {
   padding: 20px 10px;
   justify-content: center;
   background: var(--outgoing-chat-bg);
-  border-top: 1px solid var(--incoming-chat-border);
+  border-top: 1px solid var(--secondary-bg);
 }
 .typing-container .typing-content {
   display: flex;
@@ -593,10 +615,6 @@ nav a:hover {
 }*/
 
 
-.login-form {
-  margin-top: 20px;
-}
-
 .login-form label {
   display: block;
   font-size: 16px;
@@ -612,12 +630,13 @@ nav a:hover {
   border-radius: 5px;
   font-size: 16px;
   margin-bottom: 20px;
+  box-sizing: border-box;
 }
 
 .login-form button[type="submit"] {
   width: 100%;
   padding: 12px;
-  background-color: #2e7d32;
+  background-color: var(--icon-color);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -627,9 +646,73 @@ nav a:hover {
 }
 
 .login-form button[type="submit"]:hover {
-  background-color: #1b5e20;
+  background-color: var(--icon-color);
+}
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color:var(--outgoing-chat-bg);
+  margin: 0;
+}
+.login-form {
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  animation-delay: 3s;
 }
 
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.login-form {
+  background-color: var(--incoming-chat-bg);
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  max-width: 100%;
+  margin: 0 auto;
+  
+  
+}
+.pulse {
+  animation: pulse 2s forwards;
+}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.mira-logo {
+  transition: opacity 1s;
+  opacity: 1;
+  position: absolute;
+  display: flex;
+  margin: 0 auto;
+  
+}
 
+.mira-logo.fade-out {
+  opacity: 0;
+  transition: opacity 1s;
+}
+.mira-logo img {
+  width: 150px;
+  height: 150px;
+}
+.login-heading{
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  animation-delay: 3s;
 
+}
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
 
