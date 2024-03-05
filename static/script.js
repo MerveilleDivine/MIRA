@@ -2,25 +2,29 @@ const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
 const themeButton = document.querySelector("#send-btn");
-const deleteButton = document.querySelector("#mic-btn");
+const micButton = document.querySelector("#mic-btn");
 
 let userText = null;
 const API_KEY = "PASTE-YOUR-API-KEY-HERE"; // Paste your API key here
 
-const loadDataFromLocalstorage = () => {
-    // Load saved chats and theme from local storage and apply/add on the page
-    const themeColor = localStorage.getItem("themeColor");
+function loadDataFromLocalstorage() {
+  const themeColor = localStorage.getItem("themeColor");
 
-    document.body.classList.toggle("light-mode", themeColor === "light_mode");
-    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+  document.body.classList.toggle("light-mode", themeColor === "light_mode");
+  themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
 
-    const defaultText = `<div class="default-text">
-                            <h1>ChatGPT Clone</h1>
-                            <p>Start a conversation and explore the power of AI.<br> Your chat history will be displayed here.</p>
-                        </div>`
+  const allChats = localStorage.getItem("all-chats");
+  if (allChats) {
+    chatContainer.innerHTML = allChats;
+  } else {
+    // Display tiles when the chat container is empty
+    const clickableTiles = document.querySelector(".clickable-tiles");
+    if (clickableTiles) {
+      clickableTiles.style.display = "flex";
+    }
+  }
 
-    chatContainer.innerHTML = localStorage.getItem("all-chats") || defaultText;
-    chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to bottom of the chat container
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
 }
 
 const createChatElement = (content, role) => {
@@ -109,40 +113,94 @@ const showTypingAnimation = () => {
     getChatResponse(incomingChatDiv);
 }
 
-const handleOutgoingChat = () => {
-    const userText = chatInput.value.trim();
-    if (!userText) return;
-  
-    const outgoingChatDiv = createChatElement(userText, "outgoing");
-    chatContainer.appendChild(outgoingChatDiv);
-    chatContainer.scrollTo(0, chatContainer.scrollHeight);
-  
-    $.ajax({
-      url: 'http://localhost:5001/chatbot',
-      type: 'POST',
-      data: { message: userText },
-      success: function(response) {
-        const responseData = JSON.parse(response);
-        const incomingChatDiv = createChatElement(responseData.output, 'incoming');
-        chatContainer.appendChild(incomingChatDiv);
-        chatContainer.scrollTo(0, chatContainer.scrollHeight);
-      },
-      error: function(xhr, status, error) {
-        console.error('Error:', error);
-        // Handle error (e.g., display error message to the user)
-      }
-    });
-  
-    chatInput.value = "";
-    chatInput.style.height = "auto";
+const handleInputKeyDown = (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    handleOutgoingChat();
+  } else if (event.key === " ") {
+    if (event.target.id === "mic-btn") {
+      event.preventDefault();
+      startRecognition();
+    }
   }
+};
+
+const startRecognition = () => {
+  recognition.start();
+  sendButton.setAttribute("disabled", true);
+  sendButton.classList.add("disabled");
+  sendButton.innerHTML = `<div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>`;
+  recognition.addEventListener("result", handleRecognitionResult);
+  recognition.addEventListener("end", handleRecognitionEnd);
+};
+
+const handleRecognitionResult = (event) => {
+  const transcript = event.results[0][0].transcript;
+  chatInput.value = transcript;
+  chatInput.dispatchEvent(new Event("input", { bubbles: true }));
+};
+
+const handleRecognitionEnd = () => {
+  sendButton.removeAttribute("disabled");
+  sendButton.classList.remove("disabled");
+  sendButton.innerHTML = `Send`;
+};
+
+// Add event listeners to the mic button
+micButton.addEventListener("click", startRecognition);
+chatInput.addEventListener("keydown", handleInputKeyDown);
+
+chatInput.addEventListener("keydown", handleInputKeyDown);
+
+const handleOutgoingChat = () => {
+  const userText = chatInput.value.trim();
+  if (!userText) return;
+
+  const outgoingChatDiv = createChatElement(userText, "user");
+  chatContainer.appendChild(outgoingChatDiv);
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
+
+  sendButton.setAttribute("disabled", true);
+  sendButton.classList.add("disabled");
+  sendButton.innerHTML = `<div class="spinner-border" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>`;
+
+  $.ajax({
+    url: 'http://127.0.0.1:5001/',
+    type: 'POST',
+    data: { message: userText },
+    success: function(response) {
+      const responseData = JSON.parse(response);
+      const incomingChatDiv = createChatElement(responseData.output, 'incoming');
+      chatContainer.appendChild(incomingChatDiv);
+      chatContainer.scrollTo(0, chatContainer.scrollHeight);
+
+      sendButton.removeAttribute("disabled");
+      sendButton.classList.remove("disabled");
+      sendButton.innerHTML = `Send`;
+    },
+    error: function(xhr, status, error) {
+      console.error('Error:', error);
+      sendButton.removeAttribute("disabled");
+      sendButton.classList.remove("disabled");
+      sendButton.innerHTML = `Send`;
+      // Handle error (e.g., display error message to the user)
+    }
+  });
+
+  chatInput.value = "";
+  chatInput.style.height = "auto";
+};
 /*deleteButton.addEventListener("click", () => {
     // Remove the chats from local storage and call loadDataFromLocalstorage function
     if(confirm("Are you sure you want to delete all the chats?")) {
         localStorage.removeItem("all-chats");
         loadDataFromLocalstorage();
     }
-})*/;
+})*/
 
 sendButton.addEventListener("click", handleOutgoingChat);
 // Function to handle speech recognition
@@ -222,7 +280,7 @@ recognition.continuous = true;
 recognition.interimResults = true;
 
 // Select the voice button
-const voiceButton = document.getElementById('voice-button');
+const voiceButton = document.getElementById('mic-button');
 
 // Add a click event listener to the voice button
 voiceButton.addEventListener('click', () => {

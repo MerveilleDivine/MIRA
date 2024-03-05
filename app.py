@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, Response
 import openai
 from dotenv import load_dotenv
 import speech_recognition as sr
@@ -50,7 +50,7 @@ def index():
 # Error Handling
 @app.errorhandler(500)
 def internal_server_error(e):
-    return jsonify(error="Internal Server Error"), 500
+    return jsonify(error="Internal Server Error miraaa"), 500
 
 
 # User Authentication
@@ -79,9 +79,11 @@ def chat():
     # Pass the user input to the chatbot to generate a response
     response = mira.generate_response(input_text)
 
-    return jsonify(output=response)
+    # Set the Access-Control-Allow-Origin header
+    headers = {'Access-Control-Allow-Origin': 'http://127.0.0.1:5001'}
 
-
+    # Return the response with the headers
+    return Response(response=jsonify(output=response), headers=headers)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
