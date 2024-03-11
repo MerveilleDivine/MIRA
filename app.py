@@ -1,4 +1,4 @@
-from flask import Flask, make_response, render_template, request, jsonify, session, Response,redirect, url_for
+from flask import Flask, make_response, render_template, request, jsonify, session, Response, redirect, url_for
 import openai
 from dotenv import load_dotenv
 import os
@@ -13,11 +13,26 @@ load_dotenv()
 app = Flask(__name__, template_folder='templates')
 app.secret_key = os.getenv("SECRET_KEY")  # Secret key for session management
 
+# Dummy user data (replace with your database)
+users = {
+    'user1': {
+        'password': 'password',
+        'name': 'mervine'
+    },
+    'user2': {
+        'password': 'password2',
+        'name': 'User 2'
+    }
+}
+
 mira = MIRA()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if 'user_id' in session:
+        return render_template('index.html')
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -28,21 +43,24 @@ def chat():
         return make_response(jsonify(error='Missing message'), 400)
     response = mira.generate_response(input_text)
     headers = {'Access-Control-Allow-Origin': 'http://127.0.0.1:5001'}
-    return redirect(url_for('chat'))
     return Response(response, headers=headers, mimetype='text/plain')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user_id = request.form.get('user_id')
-        if user_id:
-            session['user_id'] = user_id
+        username = request.form['username']
+        password = request.form['password']
+
+        # Check if the username and password are valid
+        if username in users and users[username]['password'] == password:
+            # Store user ID in session to indicate they are logged in
+            session['username'] = username
             return redirect(url_for('index'))
         else:
-            return render_template('login.html', error='Invalid user ID')
+            return render_template('login.html', error='Invalid credentials')
     else:
         return render_template('login.html')
+
 @app.route('/start_conversation', methods=['POST'])
 def start_conversation():
     if 'user_id' not in session:

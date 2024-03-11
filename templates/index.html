@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en" dir="ltr">
 
 <head>
@@ -13,38 +12,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
         integrity="sha512-Q5ysp7hFCukmwbh/qy8JiZ14o7D74sdDnDu4pNupzLPG6Xrj7G/ETUKsOiKP6Qjq5v7Mv2XOcbtPCp5z6bECOg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        integrity="sha512-Fo3rlrZVj0nMSkhACEbttAr4Pasoyo Tamb/w+W87suzpU12fkkLQTG4cGnLqzWG8PS521TBUK2/XJD8+jK/XlGg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </head>
 
 <body class="dark-mode">
 
     <header>
         <input type='checkbox' id='new' style='display:none;' />
-        <!-- <h1 class="heading-offcanva">OffCanvas Menu</h1>-->
         <nav class="nav-menu">
             <!-- Display the user's ID -->
             <p>User ID: {{ session.user_id }}</p>
 
             <!-- Display a button to start a new conversation -->
-            <form method="POST" action="{{ url_for('start_conversation') }}">
+            <form id="new-conversation-form" method="POST" action="{{ url_for('start_conversation') }}">
                 <button type="submit">Start a new conversation</button>
             </form>
-
-            <!-- <ul class="offcanva-ul">
-                <li class="offcanva-li"><a href='#'>Home</a></li>
-                <li class="offcanva-li"><a href='#'>About</a></li>
-                <li class="offcanva-li"><a href='#'>Fun</a></li>
-                <li class="offcanva-li"><a href='#'>Contact</a></li>
-                <li class="offcanva-li"><a href='#'>Links</a></li>
-            </ul>-->
         </nav>
         <main>
-
-
             <nav class="nav-mira">
                 <button class="mira-button" onclick="location.reload()">
                     <span>
@@ -63,24 +46,7 @@
                     <button class="menu-button help-button" stroke="var(--primary-text)">
                         <img src="/static/images/help-octagon-1-svgrepo-com.svg" alt="Help" />
                     </button>
-                    <!---- <div class="menu-container menu-button">
-                        <button class="menu-button menu-icon menu-active menu-trigger">
-                            <svg class="menu-icon" viewBox="0 0 24 24">
-                                <line id="line1" x1="0" y1="5" x2="15" y2="5" stroke="var(--primary-text)"
-                                    stroke-width="2" />
-                                <line id="line2" x1="0" y1="12" x2="30" y2="12" stroke="var(--primary-text)"
-                                    stroke-width="2" stroke-dasharray="20,10" />
-                                <line id="line3" x1="0" y1="19" x2="15" y2="19" stroke="var(--primary-text)"
-                                    stroke-width="2" />
-
-                            </svg>
-                        </button>
-                        <div class="menu-window" id="slide-menu">
-
-
-                        </div>
-
-                    </div>-->
+                </div>
             </nav>
             <label class='toggleMenu' for='new'>
                 <span class='bar'> </span>
@@ -92,7 +58,6 @@
                     <div class="assist-text">
                         <h1 class="assist-logo"><span><img src="static/images/letter-m.png" alt="logo b&w"></span></h1>
                         <div class="assist-text typing-animation">
-                            <!-- <h1 class="assist-heading">Hey,there</h1> -->
                             <h1 class="assist-heading typing-animation">How can I assist you?</h1>
                         </div>
                     </div>
@@ -104,8 +69,7 @@
                                 <p class="tile-content"><img src="static/images/summary.png" alt="summary icon"></p>
                                 <h2>Summarize</h2>
                                 <p>Condense lengthy study materials into concise summaries, focusing on essential points
-                                    and key
-                                    concepts.</p>
+                                    and key concepts.</p>
                             </a>
                         </div>
                         <div class="tile">
@@ -113,42 +77,34 @@
                                 <p class="tile-content"><img src="static/images/ask.png" alt="ask icon"></p>
                                 <h2>Questions</h2>
                                 <p>Automatically generate interactive exam-style questions based on your preferences,
-                                    covering
-                                    various topics and difficulty levels.</p>
+                                    covering various topics and difficulty levels.</p>
                             </a>
                         </div>
                         <div class="tile">
                             <a href="#">
-                                <p class="tile-content"><img src="static/images/satisfaction.png" alt="feedback icon">
-                                </p>
+                                <p class="tile-content"><img src="static/images/satisfaction.png"
+                                        alt="feedback icon"></p>
                                 <h2>Feedback</h2>
                                 <p>Provide you with tailored feedback based on your performance in practice exams and
-                                    quizzes.
-                                    Help
-                                    you identify areas of strength and weakness.</p>
+                                    quizzes. Help you identify areas of strength and weakness.</p>
                             </a>
                         </div>
                     </section>
                 </div>
-
                 <!-- Typing container -->
                 <div class="typing-container">
                     <div class="typing-content">
                         <div class="typing-textarea">
-                            <textarea id="chat-input" spellcheck="false" placeholder="Send a message"
-                                required></textarea>
+                            <textarea id="chat-input" spellcheck="false" placeholder="Send a message" required></textarea>
                             <span id="send-btn" class="material-symbols-rounded" data-redirect="true">send</span>
                         </div>
                         <div class="typing-controls">
                             <span id="send-btn" class="material-symbols-rounded">stop</span>
                             <span id="mic-btn" class="material-symbols-rounded">mic</span>
-
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </main>
     </header>
 
