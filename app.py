@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, Response
+from flask import Flask, render_template, request, jsonify, session, Response,redirect
 import openai
 from dotenv import load_dotenv
 import speech_recognition as sr
@@ -41,6 +41,12 @@ class Chatbot:
         # You can implement any processing logic here if needed
         pass
 
+@app.route('/process_message', methods=['POST'])
+def process_message():
+    user_message = request.form.get('user-message')
+    # Process the user's message here
+    response = {'output': 'This is the server response'}
+    return jsonify(response)
 
 @app.route('/')
 def index():
@@ -71,7 +77,7 @@ def logout():
 
 
 # Chatbot Route
-@app.route('/chatbot', methods=['POST'])
+@app.route('/chat', methods=['POST'])
 def chat():
     input_text = request.form['message']
     user_id = session.get('user_id')
@@ -83,7 +89,7 @@ def chat():
     headers = {'Access-Control-Allow-Origin': 'http://127.0.0.1:5001'}
 
     # Return the response with the headers
-    return Response(response=jsonify(output=response), headers=headers)
+    render_template('chat.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

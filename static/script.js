@@ -8,11 +8,6 @@ let userText = null;
 const API_KEY = "PASTE-YOUR-API-KEY-HERE"; // Paste your API key here
 
 function loadDataFromLocalstorage() {
-  const themeColor = localStorage.getItem("themeColor");
-
-  document.body.classList.toggle("light-mode", themeColor === "light_mode");
-  themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-
   const allChats = localStorage.getItem("all-chats");
   if (allChats) {
     chatContainer.innerHTML = allChats;
@@ -168,39 +163,28 @@ const handleOutgoingChat = () => {
                           <span class="visually-hidden">Loading...</span>
                         </div>`;
 
-  $.ajax({
-    url: 'http://127.0.0.1:5001/',
-    type: 'POST',
-    data: { message: userText },
-    success: function(response) {
-      const responseData = JSON.parse(response);
-      const incomingChatDiv = createChatElement(responseData.output, 'incoming');
-      chatContainer.appendChild(incomingChatDiv);
-      chatContainer.scrollTo(0, chatContainer.scrollHeight);
-
-      sendButton.removeAttribute("disabled");
-      sendButton.classList.remove("disabled");
-      sendButton.innerHTML = `Send`;
-    },
-    error: function(xhr, status, error) {
-      console.error('Error:', error);
-      sendButton.removeAttribute("disabled");
-      sendButton.classList.remove("disabled");
-      sendButton.innerHTML = `Send`;
-      // Handle error (e.g., display error message to the user)
-    }
-  });
-
+  
+    userMessage.value = userText;
+    // Send the user's message using AJAX
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '{{ http://127.0.0.1:5001/}}', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        // Redirect the user to the chat.html page after sending the message
+        window.location.href = '{{ http://127.0.0.1:5001/ }}';
+      } else {
+        console.log('Error:', xhr.statusText);
+        sendBtn.removeAttribute("disabled");
+        sendBtn.classList.remove("disabled");
+        sendBtn.innerHTML = `Send`;
+      }
+    };
+    xhr.send(`user-message=${userText}`);
+  }
   chatInput.value = "";
-  chatInput.style.height = "auto";
-};
-/*deleteButton.addEventListener("click", () => {
-    // Remove the chats from local storage and call loadDataFromLocalstorage function
-    if(confirm("Are you sure you want to delete all the chats?")) {
-        localStorage.removeItem("all-chats");
-        loadDataFromLocalstorage();
-    }
-})*/
+
+
 
 sendButton.addEventListener("click", handleOutgoingChat);
 // Function to handle speech recognition
@@ -225,33 +209,34 @@ const handleSpeechRecognition = () => {
 
 micButton.addEventListener("click", handleSpeechRecognition);
 
-const appendChatMessage = (message, role) => {
-    const chatDiv = document.createElement("div");
-    chatDiv.classList.add("chat", role === 'user' ? 'outgoing' : 'incoming');
-    chatDiv.innerHTML = `
-        <div class="chat-content">
-            <div class="chat-details">
-                <img src="${role === 'user' ? 'images/user.jpg' : 'images/chatbot.jpg'}" alt="${role === 'user' ? 'user-img' : 'chatbot-img'}">
-                <p>${message}</p>
-            </div>
-        </div>`;
-    chatContainer.appendChild(chatDiv);
-    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+
+const sendBtn = document.getElementById('send-btn');
+let isFirstPress = true;
+
+sendBtn.addEventListener('click', () => {
+  if (isFirstPress) {
+    window.location.href = 'chat.html';
+  }
+  isFirstPress = false;
+
+  // Add the rest of your send button logic here
+});
+
+const saveMessagesToLocalStorage = (messages) => {
+  localStorage.setItem('messages', JSON.stringify(messages));
 };
 
-sendButton.addEventListener("click", handleOutgoingChat);
+// In your send button event listener, add the following line:
+saveMessagesToLocalStorage(messages);
 
-const toggleTheme = () => {
-    document.body.classList.toggle('dark-theme')
-  }
+const loadMessagesFromLocalStorage = () => {
+  const messages = JSON.parse(localStorage.getItem('messages')) || [];
+  return messages;
+};
 
-themeButton.addEventListener("click", () => {
-    toggleTheme()
-    localStorage.setItem("themeColor", themeButton.innerText);
-    themeButton.innerText = document.body.classList.contains("dark-theme") ? "light_mode" : "dark_mode"
-    // Toggle body's class for the theme mode and save the updated theme to the local storage 
-    document.body.classList.toggle("light-mode");
-});
+// Load messages when the chat.html page is loaded:
+const messages = loadMessagesFromLocalStorage();
+// Add the messages to the chat container
 
 const initialInputHeight = chatInput.scrollHeight;
 
@@ -268,7 +253,6 @@ chatInput.addEventListener("keydown", (e) => {
         handleOutgoingChat();
     }
 });
-
 
 loadDataFromLocalstorage();
 sendButton.addEventListener("click", handleOutgoingChat);
@@ -340,16 +324,55 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-const modeToggle = document.getElementById('mode-toggle');
-const body = document.body;
+const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const body = document.querySelector('body');
 
-// Check if the user has a preference for dark mode
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+if (isDarkMode) {
   body.classList.add('dark-mode');
+} else {
+  body.classList.add('light-mode');
 }
 
+// Select the mode toggle button
 // Toggle the classes on button click
 modeToggle.addEventListener('click', () => {
   body.classList.toggle('light-mode');
   body.classList.toggle('dark-mode');
 });
+
+const toggleSwitch = document.querySelector('.toggle-switch');
+const modeLabel = document.querySelector('.mode-label');
+
+toggleSwitch.addEventListener('click', () => {
+  toggleSwitch.classList.toggle('dark-mode');
+  if (toggleSwitch.classList.contains('dark-mode')) {
+    document.body.classList.add('dark-mode');
+    modeLabel.textContent = 'Light mode';
+  } else {
+    document.body.classList.remove('dark-mode');
+    modeLabel.textContent = 'Dark mode';
+  }
+});
+
+const menuButton = document.querySelector('.menu-icon');
+const menuWindow = document.querySelector('.menu-window');
+
+menuButton.addEventListener('click', () => {
+  menuWindow.classList.toggle('open');
+});
+
+
+
+/*
+  Slidemenu
+*/
+(function() {
+  var $body = document.body,
+      $menu_trigger = $body.querySelector('.menu-trigger'); // Changed from getElementsByClassName to querySelector
+
+  if ($menu_trigger !== null) { // Check if menu_trigger exists
+      $menu_trigger.addEventListener('click', function() {
+          $body.classList.toggle('menu-active'); // Toggle the menu-active class on the body
+      });
+  }
+})();
