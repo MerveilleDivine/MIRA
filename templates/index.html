@@ -21,18 +21,26 @@
 </head>
 
 <body class="dark-mode">
-    
+
     <header>
         <input type='checkbox' id='new' style='display:none;' />
         <!-- <h1 class="heading-offcanva">OffCanvas Menu</h1>-->
         <nav class="nav-menu">
-            <ul class="offcanva-ul">
+            <!-- Display the user's ID -->
+            <p>User ID: {{ session.user_id }}</p>
+
+            <!-- Display a button to start a new conversation -->
+            <form method="POST" action="{{ url_for('start_conversation') }}">
+                <button type="submit">Start a new conversation</button>
+            </form>
+
+            <!-- <ul class="offcanva-ul">
                 <li class="offcanva-li"><a href='#'>Home</a></li>
                 <li class="offcanva-li"><a href='#'>About</a></li>
                 <li class="offcanva-li"><a href='#'>Fun</a></li>
                 <li class="offcanva-li"><a href='#'>Contact</a></li>
                 <li class="offcanva-li"><a href='#'>Links</a></li>
-            </ul>
+            </ul>-->
         </nav>
         <main>
 
@@ -55,7 +63,7 @@
                     <button class="menu-button help-button" stroke="var(--primary-text)">
                         <img src="/static/images/help-octagon-1-svgrepo-com.svg" alt="Help" />
                     </button>
-                   <!---- <div class="menu-container menu-button">
+                    <!---- <div class="menu-container menu-button">
                         <button class="menu-button menu-icon menu-active menu-trigger">
                             <svg class="menu-icon" viewBox="0 0 24 24">
                                 <line id="line1" x1="0" y1="5" x2="15" y2="5" stroke="var(--primary-text)"
@@ -76,8 +84,8 @@
             </nav>
             <label class='toggleMenu' for='new'>
                 <span class='bar'> </span>
-                 <span class='bar'></span>
-                 <span class='bar'></span>
+                <span class='bar'></span>
+                <span class='bar'></span>
             </label>
             <div class="chats menu-trigger" id="content">
                 <div class="chat-container conversation conversation-content conversation-start">
