@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MIRA exam prep assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts Link For Icons -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Q5ysp7hFCukmwbh/qy8JiZ14o7D74sdDnDu4pNupzLPG6Xrj7G/ETUKsOiKP6Qjq5v7Mv2XOcbtPCp5z6bECOg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Fo3rlrZVj0nMSkhACEbttAr4Pasoyo Tamb/w+W87suzpU12fkkLQTG4cGnLqzWG8PS521TBUK2/XJD8+jK/XlGg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+
+</head>
+<body class="login-page dark-mode">
+    
+    <div class="mira-logo pulse">
+        <img src="/static/images/letter-m (1).png" alt="MIRA Logo">
+      </div>
+    
+    <div class="login-container">
+        <h1 class="login-heading">Login</h1>
+        <form class="login-form" id="login-form" action="/login" method="POST"> 
+            {{ form.hidden_tag() }}
+            {{ form.username }}
+            {{ form.password }}
+            {{ form.submit }}
+        </form>
+
+        
+    <a href="{{ url_for('login') }}">Already have an account? Log In</a>
+
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

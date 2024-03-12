@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>MIRA exam prep assistant</title>
@@ -15,29 +16,32 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="/static/script.js"></script>
+
 
 </head>
+
 <body class="login-page dark-mode">
-    
+
     <div class="mira-logo pulse">
         <img src="/static/images/letter-m (1).png" alt="MIRA Logo">
-      </div>
-    
-    <div class="login-container">
-        <h1 class="login-heading">Login</h1>
-        <form class="login-form" id="login-form">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password">
-            <button type="submit">Login</button>
-        
-        </form>
-        
-
     </div>
 
+    <div class="login-container">
+        <h1 class="login-heading">Login</h1>
+        <form class="login-form" id="login-form" action="/login" method="POST"  onsubmit="event.preventDefault();">
+            {{ form.hidden_tag() }}
+            {{ form.username }}
+            {{ form.password }}
+            {{ form.submit }}
+           <div>
+            <a href="{{ url_for('register') }}">Don't have an account? Sign Up</a>
+            </div>
+        </form>
+         
+
+
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>

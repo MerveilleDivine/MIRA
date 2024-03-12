@@ -19,13 +19,12 @@
     <header>
         <input type='checkbox' id='new' style='display:none;' />
         <nav class="nav-menu">
-            <!-- Display the user's ID -->
-            <p>User ID: {{ session.user_id }}</p>
-
+            
             <!-- Display a button to start a new conversation -->
             <form id="new-conversation-form" method="POST" action="{{ url_for('start_conversation') }}">
                 <button type="submit">Start a new conversation</button>
             </form>
+            <a href="{{url_for('logout')}}">Press here to logout</a>
         </nav>
         <main>
             <nav class="nav-mira">
@@ -82,8 +81,8 @@
                         </div>
                         <div class="tile">
                             <a href="#">
-                                <p class="tile-content"><img src="static/images/satisfaction.png"
-                                        alt="feedback icon"></p>
+                                <p class="tile-content"><img src="static/images/satisfaction.png" alt="feedback icon">
+                                </p>
                                 <h2>Feedback</h2>
                                 <p>Provide you with tailored feedback based on your performance in practice exams and
                                     quizzes. Help you identify areas of strength and weakness.</p>
@@ -95,12 +94,20 @@
                 <div class="typing-container">
                     <div class="typing-content">
                         <div class="typing-textarea">
-                            <textarea id="chat-input" spellcheck="false" placeholder="Send a message" required></textarea>
+                            <textarea id="chat-input" spellcheck="false" placeholder="Send a message"
+                                required></textarea>
                             <span id="send-btn" class="material-symbols-rounded" data-redirect="true">send</span>
                         </div>
                         <div class="typing-controls">
                             <span id="send-btn" class="material-symbols-rounded">stop</span>
                             <span id="mic-btn" class="material-symbols-rounded">mic</span>
+                        </div>
+                        <div>
+
+                            <span class="material-symbols-rounded" id="upload-button" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx">attach_file
+                            </span>
+                            <input type="file" id="upload-button" accept=".pdf,.doc,.docx,.ppt,.pptx"
+                                style="display: none;" />
                         </div>
                     </div>
                 </div>

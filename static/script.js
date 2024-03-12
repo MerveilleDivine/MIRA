@@ -1,4 +1,4 @@
-(function () {
+
   // Get DOM elements
   const userInput = document.getElementById('user-input');
   const chatHistory = document.querySelector('.chat-history');
@@ -285,7 +285,8 @@
 
   document.getElementById('login-form').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent default form submission
-
+   
+    
     // Get form data
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -295,22 +296,33 @@
     formData.append('username', username);
     formData.append('password', password);
 
-    // Send form data to Flask for authentication
-    fetch('/login', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.ok) {
-            // Redirect or perform other actions based on successful authentication
-            window.location.href = '/index';
-        } else {
-            // Handle authentication error (e.g., display error message)
-            console.error('Authentication error:', response.statusText);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    if (username.trim() === '' || password.trim() === '') {
+      alert('Please enter both username and password.');
+      return; // Exit the function if validation fails
+  }
+
 });
-})();
+
+document.getElementById('upload-button').addEventListener('change', function(event) {
+  var file = event.target.files[0];
+
+  // Send the file to the server for processing
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/upload', true);
+  xhr.upload.onprogress = function(e) {
+    if (e.lengthComputable) {
+      var percentComplete = (e.loaded / e.total) * 100;
+      console.log('Uploaded: ' + percentComplete + '%');
+    }
+  };
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      console.log('File uploaded successfully');
+    } else {
+      console.log('File upload failed');
+    }
+  };
+  xhr.send(file);
+});
+
+
