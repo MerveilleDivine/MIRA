@@ -300,7 +300,6 @@
       alert('Please enter both username and password.');
       return; // Exit the function if validation fails
   }
-
 });
 
 document.getElementById('upload-button').addEventListener('change', function(event) {

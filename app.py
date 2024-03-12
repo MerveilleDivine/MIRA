@@ -1,8 +1,12 @@
+from fastapi import applications
 from flask import Flask, flash, make_response, render_template, request, jsonify, session, Response, redirect, url_for
 import openai
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from dotenv import load_dotenv
 from flask_wtf import FlaskForm
+
+import sqlite3
 from flask_bcrypt import Bcrypt
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
@@ -15,14 +19,20 @@ from threading import Thread
 from mira import MIRA
 
 load_dotenv()
-db = SQLAlchemy()
+
 app = Flask(__name__, template_folder='templates')
 app.secret_key = os.getenv("SECRET_KEY")  # Secret key for session management
 
 bcrypt = Bcrypt(app)
+
+
 # Set the SQLAlchemy database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/User/.vscode/near_east_internship/database.db'
-db.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+app.app_context().push()
+
 
 mira = MIRA()
 
@@ -40,6 +50,9 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
+# Create all tables
+with app.app_context():
+    db.create_all()
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
@@ -93,6 +106,8 @@ def login():
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
                 return redirect(url_for('index'))
+        else:
+             flash('Invalid username or password')
     return render_template('login.html', form=form)
 
 @app.route('/start_conversation', methods=['POST'])
@@ -119,6 +134,14 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+@app.route('/check_db')
+def check_db():
+    try:
+        db.session.execute(text('SELECT 1'))
+        return jsonify(message='Database connected successfully'), 200
+    except Exception as e:
+        return jsonify(message=f'Error connecting to database: {str(e)}'), 500
 
 
 if __name__ == '__main__':
