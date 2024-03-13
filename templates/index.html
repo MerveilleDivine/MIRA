@@ -17,7 +17,7 @@
 <body class="dark-mode">
 
     <header>
-        <input type='checkbox' id='new' style='display:none;' />
+        
         <nav class="nav-menu">
             
             <!-- Display a button to start a new conversation -->
@@ -60,6 +60,10 @@
                             <h1 class="assist-heading typing-animation">How can I assist you?</h1>
                         </div>
                     </div>
+                    <form id="start-conversation-form" method="post" action="{{ url_for('chat') }}">
+                        <input type="hidden" name="message" value="{{ session.get('first_message') }}">
+                        <button type="submit" id="start-conversation-button" style="display: none;">Start conversation</button>
+                    </form>
 
                     <!-- Clickable tiles section -->
                     <section class="clickable-tiles">
@@ -91,26 +95,24 @@
                     </section>
                 </div>
                 <!-- Typing container -->
-                <div class="typing-container">
-                    <div class="typing-content">
-                        <div class="typing-textarea">
-                            <textarea id="chat-input" spellcheck="false" placeholder="Send a message"
-                                required></textarea>
-                            <span id="send-btn" class="material-symbols-rounded" data-redirect="true">send</span>
-                        </div>
-                        <div class="typing-controls">
-                            <span id="send-btn" class="material-symbols-rounded">stop</span>
-                            <span id="mic-btn" class="material-symbols-rounded">mic</span>
-                        </div>
-                        <div>
-
-                            <span class="material-symbols-rounded" id="upload-button" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx">attach_file
-                            </span>
-                            <input type="file" id="upload-button" accept=".pdf,.doc,.docx,.ppt,.pptx"
-                                style="display: none;" />
-                        </div>
-                    </div>
-                </div>
+<div class="typing-container">
+    <div class="typing-content">
+        <form id="chat-form" method="POST" action="{{ url_for('chat') }}">
+            <div class="typing-textarea">
+                <textarea id="chat-input" name="message" spellcheck="true" placeholder="Send a message" required></textarea>
+                <button class="material-symbols-rounded" type="submit">Send</button>
+            </div>
+            <div class="typing-controls">
+                <span id="send-btn" class="material-symbols-rounded">stop</span>
+                <span id="mic-btn" class="material-symbols-rounded">mic</span>
+            </div>
+            <div>
+                <label for="upload-button" class="material-symbols-rounded">attach_file</label>
+                <input type="file" id="upload-button" accept=".pdf,.doc,.docx,.ppt,.pptx" style="display: none;" />
+            </div>
+        </form>
+    </div>
+</div>
             </div>
         </main>
     </header>

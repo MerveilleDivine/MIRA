@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>MIRA exam prep assistant</title>
@@ -15,28 +16,41 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
 
 </head>
+
 <body class="login-page dark-mode">
-    
+
     <div class="mira-logo pulse">
         <img src="/static/images/letter-m (1).png" alt="MIRA Logo">
-      </div>
-    
+    </div>
+
     <div class="login-container">
         <h1 class="login-heading">Login</h1>
-        <form class="login-form" id="login-form" action="/login" method="POST"> 
+        <form class="login-form" id="login-form" action="/register" method="POST">
             {{ form.hidden_tag() }}
             {{ form.username }}
             {{ form.password }}
             {{ form.submit }}
         </form>
 
-        
-    <a href="{{ url_for('login') }}">Already have an account? Log In</a>
+
+        <a href="{{ url_for('login') }}">Already have an account? Log In</a>
+
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
 
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
