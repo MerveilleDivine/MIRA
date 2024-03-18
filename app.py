@@ -8,6 +8,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 import os
+from wtforms import SubmitField
 from mira import MIRA
 
 load_dotenv()
@@ -36,18 +37,14 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
+    email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
 
 # Create all tables
 with app.app_context():
     db.create_all()
 
-class RegisterForm(FlaskForm):
-    username = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-    submit = SubmitField('Register')
+
 
     def validate_username(self, username):
         existing_user_username = User.query.filter_by(
@@ -56,11 +53,6 @@ class RegisterForm(FlaskForm):
             raise ValidationError(
                 'That username already exists. Please choose a different one.')
 
-class LoginForm(FlaskForm):
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
-    password = PasswordField(validators=[InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-    submit = SubmitField('Login')
-
 @app.route('/')
 def index():
     if 'first_message' in session:
@@ -68,23 +60,36 @@ def index():
         chat_form = {'message': first_message}
         return redirect(url_for('chat', **chat_form))
     else:
-        return render_template('index.html')
+        summary_form = SummaryForm()
+        questions_form = QuestionsForm()
+        feedback_form = FeedbackForm()
+        return render_template('index.html', summary_form=summary_form, questions_form=questions_form, feedback_form=feedback_form)
 
 
-@app.route('/chat', methods=['POST'])
+@app.route('/chat', methods=['GET', 'POST'])
 def chat():
-    input_text = request.form.get('message')
-    if not input_text:
-        return make_response(jsonify(error='Missing message'), 400)
-    if 'first_message' in session:
-        session.pop('first_message')
+    if request.method == 'GET':
+        # Render the chat.html template without waiting for a user message
+        headers = {'Access-Control-Allow-Origin': 'http://127.0.0.1:5001'}
+        return render_template('chat.html', response="Hi " + current_user.username + ", what can I do for you?", headers=headers)
+
+    elif request.method == 'POST':
+        input_text = request.form.get('message')
+        input_method = request.form.get('input_method')
+
+        # Handle the user's input message and generate a response using MIRA
+        if input_method == 'speak':
+            user_input = mira.get_user_input()
+        else:
+            user_input = input_text
+
+        if not user_input:
+            return make_response(jsonify(error='Missing message'), 400)
+        
         response = mira.generate_response(input_text)
-    else:
-        session['first_message'] = input_text
-        response = mira.generate_response(input_text)
-    headers = {'Access-Control-Allow-Origin': 'http://127.0.0.1:5001'}
-    # Pass the response and headers to the chat.html template
-    return render_template('chat.html', response=response, headers=headers)
+        headers = {'Access-Control-Allow-Origin': 'http://127.0.0.1:5001'}
+        # Pass the response and headers to the chat.html template
+        return render_template('chat.html', response=response, headers=headers)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -105,27 +110,35 @@ def upload():
     return summary
 @app.route('/login', methods=['GET','POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('index'))
-        else:
-            flash('Invalid username or password')
-    return render_template('login.html', form=form)
+    # Get the submitted values from the form
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-@app.route('/start_conversation', methods=['POST'])
-def start_conversation():
+    # Find the user by email
+    user = User.query.filter_by(email=email).first()
+
+    # Check if the user exists and the password is correct
+    if user and bcrypt.check_password_hash(user.password, password):
+        login_user(user)
+        return redirect(url_for('index'))
+    else:
+        flash('Invalid email or password')
+    return render_template('loginRegister.html')
+
+@app.route('/new_chat', methods=['GET','POST'])
+def new_chat():
     return redirect(url_for('chat'))
 
 @app.route('/send', methods=['POST'])
 def send():
-    message = request.form['message']
+    data = request.get_json()  # Get JSON data from the request
+    message = data['message']  # Extract the message from the JSON data
+
     # Generate a response to the user's message here
     response = mira.generate_response(message)
-    return response
+    
+    # Return the response as JSON
+    return jsonify({'response': response})
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -135,22 +148,82 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm()
+    # Get the submitted values from the form
+    username = request.form.get('name')
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
+    # Check if the username already exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        flash('That username already exists. Please choose a different one.')
+        return redirect(url_for('login'))
 
-        # Check if the user was successfully added to the database
-        if User.query.filter_by(username=form.username.data).first():
-            flash('User registered successfully. Please log in.')
-            return redirect(url_for('login'))
-        else:
-            flash('Failed to register user.')
+    # Check if the email already exists
+    existing_email = User.query.filter_by(email=email).first()
+    if existing_email:
+        flash('That email address is already registered.')
+        return redirect(url_for('login'))
 
-    return render_template('register.html', form=form)
+    # Hash the password
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    # Create a new user instance
+    new_user = User(username=username, email=email, password=hashed_password)
+
+    # Add the new user to the database
+    db.session.add(new_user)
+    db.session.commit()
+
+    flash('User registered successfully. Please log in.')
+
+    return render_template('loginRegister.html')
+
+
+
+class SummaryForm(FlaskForm):
+    submit = SubmitField('Summarize')
+
+class QuestionsForm(FlaskForm):
+    submit = SubmitField('Generate Questions')
+
+class FeedbackForm(FlaskForm):
+    submit = SubmitField('Provide Feedback')
+
+@app.route('/generate_summary', methods=['GET','POST'])
+def generate_summary():
+    # Get the text input from the request
+    text = request.form.get('text')
+
+    # Process the text and generate a summary
+    summary = mira.generate_summary(text)
+
+    # Return the summary as JSON response
+    return jsonify({'summary': summary})
+
+# Route for generating questions
+@app.route('/generate_questions', methods=['GET','POST'])
+def generate_questions():
+    # Get the text input from the request
+    text = request.form.get('text')
+
+    # Process the text and generate questions
+    questions = mira.generate_questions(text)
+
+    # Return the questions as JSON response
+    return jsonify({'questions': questions})
+
+# Route for providing feedback
+@app.route('/provide_feedback', methods=['GET','POST'])
+def provide_feedback():
+    # Get the feedback from the request
+    feedback = request.form.get('feedback')
+
+    # Process the feedback and provide a response
+    response = mira.provide_feedback(feedback)
+
+    # Return the response as JSON response
+    return jsonify({'response': response})
 
 @app.route('/check_db')
 def check_db():

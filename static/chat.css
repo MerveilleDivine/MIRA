@@ -1,0 +1,221 @@
+/* Chat Container */
+.chat-container {
+    background-color: none;
+    border: none;
+
+}
+
+
+/* Chat Messages */
+.chat-messages {
+    max-height: 70%; /* Adjust as needed */
+    overflow-y: auto;
+    padding: 10px 20px;
+}
+
+/* Chat Input */
+.chat-input {
+    display: flex;
+    align-items: left;
+    padding: 10px 20px;
+}
+
+.chat-input textarea {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    margin-right: 10px;
+}
+
+.chat .typing-animation {
+    padding-left: 25px;
+    display: inline-flex;
+  }
+  
+  .typing-animation .typing-dot {
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    margin: 0 3px;
+    opacity: 0.7;
+    background: var(--primary-text);
+    animation: animateDots 1.5s var(--delay) ease-in-out infinite;
+  }
+  
+  .typing-animation .typing-dot:first-child {
+    margin-left: 0;
+  }
+  
+  @keyframes animateDots {
+  
+    0%,
+    44% {
+      transform: translateY(0px);
+    }
+  
+    28% {
+      opacity: 0.4;
+      transform: translateY(-6px);
+    }
+  
+    44% {
+      opacity: 0.2;
+    }
+  }
+  
+  /* Typing container styling */
+  .typing-container {
+    position: fixed;
+    bottom: 0;
+    width: 70%;
+    overflow-y: auto;
+    display: flex;
+    z-index: 100;
+    padding: 20px 10px;
+    justify-content: center;
+    background: var(--primary-bg);
+    border-top: 1px solid var(--primary-bg);
+  }
+  
+  .typing-container .typing-content {
+    display: flex;
+    max-width: 950px;
+    width: 100%;
+    align-items: flex-end;
+  }
+  
+  .typing-container .typing-textarea {
+    width: 100%;
+    display: flex;
+    position: relative;
+  }
+  
+  .typing-textarea textarea {
+    resize: none;
+    height: 55px;
+    width: 100%;
+    border: none;
+    padding: 15px 45px 15px 20px;
+    color: var(--primary-text);
+    font-size: 1rem;
+    border-radius: 4px;
+    max-height: 250px;
+    overflow-y: auto;
+    background:var(--secondary-bg);
+    box-shadow: #1F2327 0px 0px 0px 1px;
+    outline: 1px solid var(--primary-bg);
+  }
+  
+  .typing-textarea textarea::placeholder {
+    color: var(--primary-text);
+  }
+  
+  .typing-content span {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    border-radius: 4px;
+    font-size: 1.35rem;
+    align-items: center;
+    justify-content: center;
+    color: var(--icon-color);
+  }
+  
+  .typing-textarea span {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    visibility: hidden;
+  }
+  
+  .typing-textarea textarea:valid~span {
+    visibility: visible;
+  }
+  
+  .typing-controls {
+    display: flex;
+  }
+  
+  .typing-controls span {
+    margin-left: 7px;
+    font-size: 1.4rem;
+    background: var(--primary-bg);
+    outline: 1px solid var(--primary-bg);
+  }
+  
+  .typing-controls span:hover {
+    background: var(--secondary-bg);
+  }
+  
+  /* Reponsive Media Query */
+  @media screen and (max-width: 600px) {
+    .default-text h1 {
+      font-size: 2.3rem;
+    }
+  
+    :where(.default-text p, textarea, .chat p) {
+      font-size: 0.95rem !important;
+    }
+  
+    .chat-container .chat {
+      padding: 20px 10px;
+    }
+  
+    .chat-container .chat img {
+      height: 32px;
+      width: 32px;
+    }
+  
+    .chat-container .chat p {
+      padding: 0 20px;
+    }
+  
+    .chat .chat-content:not(:has(.typing-animation), :has(.error)) span {
+      visibility: visible;
+    }
+  
+    .typing-container {
+      padding: 15px 10px;
+    }
+  
+    .typing-textarea textarea {
+      height: 45px;
+      padding: 10px 40px 10px 10px;
+    }
+  
+    .typing-content span {
+      height: 45px;
+      width: 45px;
+      margin-left: 5px;
+    }
+  
+    span.material-symbols-rounded {
+      font-size: 1.25rem !important;
+    }
+  }
+
+  
+  .default-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 70vh;
+    padding: 0 10px;
+    text-align: center;
+    color: var(--primary-text);
+  }
+  span.material-symbols-rounded {
+
+    cursor: pointer;
+  }
+  
+  .chat .chat-content span {
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: var(--primary-text);
+    margin: 0 10px;
+    transition: all 0.3s ease;
+    visibility: hidden;
+  }
+  

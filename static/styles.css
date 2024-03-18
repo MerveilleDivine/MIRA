@@ -116,7 +116,7 @@ body {
 .chat .chat-content {
   display: flex;
   max-width: 1200px;
-  width: 100%;
+  width: 70%;
   align-items: flex-start;
   justify-content: space-between;
 }
@@ -204,7 +204,7 @@ span.material-symbols-rounded {
 .typing-container {
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 70%;
   overflow-y: auto;
   display: flex;
   z-index: 100;
@@ -238,7 +238,7 @@ span.material-symbols-rounded {
   border-radius: 4px;
   max-height: 250px;
   overflow-y: auto;
-  background: #212529;
+  background:var(--secondary-bg);
   box-shadow: #1F2327 0px 0px 0px 1px;
   outline: 1px solid var(--primary-bg);
 }
@@ -340,27 +340,44 @@ span.material-symbols-rounded {
 
 }
 
+/* Add this section to your existing CSS */
+.tile button {
+  background-color: transparent !important;
+  border: none;
+  padding: 0;
+}
 .tile {
-  background-color: #1f020229;
   border-radius: 5px;
-  padding: 25px;
+  padding: 30px;
   width: 300px;
-  margin: 0 45px;
+  /* Adjust width as needed */
+  margin: 0 20px;
+  /* Adjust margin as needed */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.3s;
+  overflow: hidden;
 }
 
 .tile h2,
 .tile p {
   color: var(--primary-text);
+  /* Use your existing text color variable */
 }
 
 .tile:hover {
   transform: translateY(-10px);
 }
 
-.tile a p img {
+.tile a {
+  background-color: transparent;
+}
+
+.tile a p {
+  background-color: transparent;
+}
+
+.tile img {
   width: 40px;
   height: 40px;
 }
@@ -368,6 +385,7 @@ span.material-symbols-rounded {
 .clickable-tiles a {
   text-decoration: none;
 }
+
 
 .assist-text {
   text-align: center;
@@ -391,12 +409,12 @@ span.material-symbols-rounded {
 }
 
 .assist-logo span {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
 }
 
 .assist-logo span {
-  display: inline-block;
+  display: inline-flex;
   position: relative;
   animation: assist-logo-bounce 1.5s 2;
 }
@@ -917,7 +935,7 @@ nav a:hover {
 
 
 .transition {
-  
+
   -webkit-transition: opacity 0.5s ease-in-out;
   -moz-transition: opacity 0.5s ease-in-out;
   -o-transition: opacity 0.5s ease-in-out;
@@ -986,46 +1004,46 @@ li {
   }
 }
 
-  a {
+a {
 
+
+  &::before,
+  &::after {
 
     &::before,
     &::after {
+      content: "";
+      background-image: url("data:image/svg+xml,<svg class='menu-icon' viewBox='0 0 24 24'><line id='line1' x1='0' y1='5' x2='15' y2='5' stroke='var(--primary-text)' stroke-width='2' /><line id='line2' x1='0' y1='12' x2='30' y2='12' stroke='var(--primary-text)' stroke-width='2' stroke-dasharray='20,10' /><line id='line3' x1='0' y1='19' x2='15' y2='19' stroke='var(--primary-text)' stroke-width='2' /></svg>");
+
+      height: 100%;
+      position: absolute;
+      top: 0;
+      width: 0;
+      @include transition(all 0.3s ease-in-out);
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+
+    &:hover {
+      color: var(--button-hover-bg);
+      text-shadow: 0 0 2px var(--secondary-bg);
 
       &::before,
       &::after {
-        content: "";
-        background-image: url("data:image/svg+xml,<svg class='menu-icon' viewBox='0 0 24 24'><line id='line1' x1='0' y1='5' x2='15' y2='5' stroke='var(--primary-text)' stroke-width='2' /><line id='line2' x1='0' y1='12' x2='30' y2='12' stroke='var(--primary-text)' stroke-width='2' stroke-dasharray='20,10' /><line id='line3' x1='0' y1='19' x2='15' y2='19' stroke='var(--primary-text)' stroke-width='2' /></svg>");
-
-        height: 100%;
-        position: absolute;
-        top: 0;
-        width: 0;
-        @include transition(all 0.3s ease-in-out);
-      }
-
-      &::before {
-        left: 0;
-      }
-
-      &::after {
-        right: 0;
-      }
-
-      &:hover {
-        color: var(--button-hover-bg);
-        text-shadow: 0 0 2px var(--secondary-bg);
-
-        &::before,
-        &::after {
-          width: 5px;
-          @include box-shadow(0 0 5px 1px $lblue);
-        }
+        width: 5px;
+        @include box-shadow(0 0 5px 1px $lblue);
       }
     }
   }
+}
 
-  
+
 input:checked {
   &~main {
     height: 100%;
@@ -1063,46 +1081,48 @@ input:checked {
 }
 
 
-  .toggleMenu {
-    background-color: transparent;
-    cursor: pointer;
-    padding: 10px;
+.toggleMenu {
+  background-color: transparent;
+  cursor: pointer;
+  padding: 10px;
+  display: block;
+  width: 60px;
+  right: 0;
+  text-align: right;
+
+
+  span.bar {
     display: block;
-    width: 60px;
-    right: 0;
-    text-align: right;
-  
-
-    span.bar {
-      display: block;
-      width: 28px;
-      height: 5px;
-      margin: 3px 0px;
-      background-color:var(--text-color); 
-      border-radius: 6px;
-      position: absolute;
-      right: 10px; /* Adjust the value as needed */
-    }
-  }
-  .bar {
+    width: 28px;
+    height: 5px;
+    margin: 3px 0px;
+    background-color: var(--text-color);
+    border-radius: 6px;
     position: absolute;
-  }
-  
-  .bar:nth-child(1) {
-    right: 30px;
-  }
-  
-  .bar:nth-child(2) {
-    right: 20px;
-  }
-  
-  .bar:nth-child(3) {
     right: 10px;
+    /* Adjust the value as needed */
   }
+}
 
-  #upload-button {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-  }
+.bar {
+  position: absolute;
+}
+
+.bar:nth-child(1) {
+  right: 30px;
+}
+
+.bar:nth-child(2) {
+  right: 20px;
+}
+
+.bar:nth-child(3) {
+  right: 10px;
+}
+
+#upload-button {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
