@@ -137,8 +137,12 @@ def send():
     # Generate a response to the user's message here
     response = mira.generate_response(message)
     
-    # Return the response as JSON
-    return jsonify({'response': response})
+    # Combine user's message and MIRA's response with sender tags
+    chat_data = {'user_message': f'YOU: {message}', 'mira_response': f'MIRA: {response}'}
+
+    # Return the combined response as JSON
+    return jsonify(chat_data)
+
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
