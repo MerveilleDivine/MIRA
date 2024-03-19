@@ -4,12 +4,17 @@ from flask_wtf import FlaskForm
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from sqlalchemy import text
 from dotenv import load_dotenv
+from wtforms import TextAreaField, SelectField, RadioField, SubmitField
+from wtforms.validators import InputRequired, Length
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 import os
 from wtforms import SubmitField
 from mira import MIRA
+from datetime import datetime
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
 load_dotenv()
 
@@ -34,11 +39,44 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+class Course(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    course_code = db.Column(db.String(20), unique=True, nullable=False)
+    instructor = db.Column(db.String(100), nullable=True)
+    credits = db.Column(db.Integer, nullable=True)
+    next_quiz_date = db.Column(db.Date, nullable=True)
+    final_exam_date = db.Column(db.Date, nullable=True)
+    expected_final_grade = db.Column(db.Float, nullable=True)
+    difficulty_level = db.Column(db.Integer, nullable=True)
+    learning_outcomes = db.Column(db.Text, nullable=True)
+    
+    # Define a relationship with users (assuming a many-to-many relationship)
+    users = relationship('User', secondary='user_courses', back_populates='courses')
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
+    courses = relationship('Course', secondary='user_courses', back_populates='users')
+
+# Define the association table for the many-to-many relationship between users and courses
+user_courses = db.Table('user_courses',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('course.id'), primary_key=True)
+)
+
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    event_type = db.Column(db.String(50), nullable=False)  # Conversation or Quiz
+    event_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    event_details = db.Column(db.Text, nullable=True)
+
+    # Define a relationship with the User model
+    user = relationship('User', backref='history')
 
 # Create all tables
 with app.app_context():
@@ -216,6 +254,49 @@ def generate_questions():
 
     # Return the questions as JSON response
     return jsonify({'questions': questions})
+
+@app.route('/quiz', methods=['POST'])
+@login_required  # Ensure user is logged in to access this route
+def quiz():
+    # Fetch user's courses
+    user = User.query.get(current_user.id)
+    course_choices = [(course.id, course.name) for course in user.courses]
+
+    if request.method == 'POST':
+        # Retrieve form data
+        course_option = request.form.get('course_option')
+        course_id = request.form.get('course')
+        course_name = request.form.get('course_name')
+        course_description = request.form.get('course_description')
+        difficulty = request.form.get('difficulty')
+        question_type = request.form.get('question_type')
+
+        # Process selected course information
+        if course_option == 'existing_course':
+            selected_course = Course.query.get(course_id)
+            course_name = selected_course.name
+            # Assuming course description is not required for existing courses
+            course_description = None
+        else:
+            # Use the entered course name and description
+            pass
+
+        # Prepare instructions for MIRA
+        instructions = {
+            'course_name': course_name,
+            'course_description': course_description,
+            'difficulty': difficulty,
+            'question_type': question_type
+        }
+
+        # Send instructions to MIRA and start quiz
+        # You need to implement this part based on your MIRA integration
+
+        # Redirect to the chat page after starting the quiz
+        return redirect(url_for('chat'))
+
+    # Render the quiz.html template with course choices
+    return render_template('quiz.html', course_choices=course_choices)
 
 # Route for providing feedback
 @app.route('/provide_feedback', methods=['GET','POST'])
