@@ -13,7 +13,8 @@ import os
 from wtforms import SubmitField
 from mira import MIRA
 from datetime import datetime
-from flask_login import UserMixin
+from flask_login import UserMixin          
+from flask_migrate import Migrate
 from sqlalchemy.orm import relationship
 
 load_dotenv()
@@ -78,6 +79,15 @@ class History(db.Model):
     # Define a relationship with the User model
     user = relationship('User', backref='history')
 
+class Reminder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    date = db.Column(db.Date, nullable=False)
+    time = db.Column(db.Time, nullable=False)
+    
+    def __repr__(self):
+        return f"Reminder('{self.title}', '{self.date} {self.time}')"
 # Create all tables
 with app.app_context():
     db.create_all()
@@ -182,6 +192,36 @@ def send():
     return jsonify(chat_data)
 
 
+# Define route for adding reminders
+@app.route('/reminders/add', methods=['GET', 'POST'])
+def add_reminder():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        date_str = request.form.get('date')
+        
+        # Convert date string to datetime object
+        date = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+        
+        # Create Reminder object
+        reminder = Reminder(title=title, description=description, date=date)
+        
+        # Add reminder to database
+        db.session.add(reminder)
+        db.session.commit()
+        
+        return redirect(url_for('reminders'))
+    return render_template('add_reminder.html')
+
+# Define route for viewing reminders
+@app.route('/reminders')
+def reminders():
+    reminders = Reminder.query.all()
+    return render_template('reminders.html', reminders=reminders)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+    
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
