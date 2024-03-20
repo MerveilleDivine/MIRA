@@ -5,9 +5,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 from sqlalchemy import text
 from dotenv import load_dotenv
 from wtforms import TextAreaField, SelectField, RadioField, SubmitField
-from wtforms.validators import InputRequired, Length
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms.validators import ValidationError
 from flask_bcrypt import Bcrypt
 import os
 from wtforms import SubmitField
@@ -102,16 +100,14 @@ with app.app_context():
                 'That username already exists. Please choose a different one.')
 
 @app.route('/')
+@login_required
 def index():
     if 'first_message' in session:
         first_message = session.pop('first_message')
         chat_form = {'message': first_message}
         return redirect(url_for('chat', **chat_form))
-    else:
-        summary_form = SummaryForm()
-        questions_form = QuestionsForm()
-        feedback_form = FeedbackForm()
-        return render_template('index.html', summary_form=summary_form, questions_form=questions_form, feedback_form=feedback_form)
+    
+    return render_template('index.html')
 
 
 @app.route('/chat', methods=['GET', 'POST'])
@@ -119,7 +115,7 @@ def chat():
     if request.method == 'GET':
         # Render the chat.html template without waiting for a user message
         headers = {'Access-Control-Allow-Origin': 'http://127.0.0.1:5001'}
-        return render_template('chat.html', response="Hi " + current_user.username + ", what can I do for you?", headers=headers)
+        return render_template('chat.html', response="Good day " + current_user.username, headers=headers)
 
     elif request.method == 'POST':
         input_text = request.form.get('message')
@@ -219,11 +215,8 @@ def reminders():
     reminders = Reminder.query.all()
     return render_template('reminders.html', reminders=reminders)
 
-if __name__ == '__main__':
-    app.run(debug=True)
     
 @app.route('/logout', methods=['GET', 'POST'])
-@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
@@ -262,38 +255,31 @@ def register():
     return render_template('loginRegister.html')
 
 
+# Define route for getting feedback
+@app.route('/feedback')
+def feedback():
+    # Retrieve the user's last quiz result from the database
+    last_quiz_result = QuizResult.query.order_by(QuizResult.id.desc()).first()
 
-class SummaryForm(FlaskForm):
-    submit = SubmitField('Summarize')
+    if last_quiz_result:
+        # Analyze the quiz result and generate feedback
+        feedback = analyze_quiz_result(last_quiz_result)
+        return render_template('feedback.html', feedback=feedback)
+    else:
+        # No quiz result found
+        return "No quiz result found"
 
-class QuestionsForm(FlaskForm):
-    submit = SubmitField('Generate Questions')
+def analyze_quiz_result(quiz_result):
+    # Implement your logic to analyze the quiz result and generate feedback
+    # This is just a placeholder, you'll need to customize it based on your requirements
+    feedback = {
+        'score': quiz_result.score,
+        'areas_to_improve': ['Vocabulary', 'Grammar'],
+        'areas_ok': ['Reading comprehension', 'Listening skills'],
+        'reading_strategy_tip': 'Try to read more actively and practice summarizing passages'
+    }
+    return feedback
 
-class FeedbackForm(FlaskForm):
-    submit = SubmitField('Provide Feedback')
-
-@app.route('/generate_summary', methods=['GET','POST'])
-def generate_summary():
-    # Get the text input from the request
-    text = request.form.get('text')
-
-    # Process the text and generate a summary
-    summary = mira.generate_summary(text)
-
-    # Return the summary as JSON response
-    return jsonify({'summary': summary})
-
-# Route for generating questions
-@app.route('/generate_questions', methods=['GET','POST'])
-def generate_questions():
-    # Get the text input from the request
-    text = request.form.get('text')
-
-    # Process the text and generate questions
-    questions = mira.generate_questions(text)
-
-    # Return the questions as JSON response
-    return jsonify({'questions': questions})
 
 @app.route('/quiz', methods=['POST'])
 @login_required  # Ensure user is logged in to access this route
@@ -334,22 +320,32 @@ def quiz():
 
         # Redirect to the chat page after starting the quiz
         return redirect(url_for('chat'))
-
     # Render the quiz.html template with course choices
     return render_template('quiz.html', course_choices=course_choices)
 
-# Route for providing feedback
-@app.route('/provide_feedback', methods=['GET','POST'])
-def provide_feedback():
-    # Get the feedback from the request
-    feedback = request.form.get('feedback')
+@app.route('/summary', methods=['GET', 'POST'])
+def summary():
+    if request.method == 'POST':
+        # Check if a file was uploaded
+        if 'file' not in request.files:
+            return "No file uploaded"
+        
+        file = request.files['file']
+        
+        # Check if the file is empty
+        if file.filename == '':
+            return "No file selected"
 
-    # Process the feedback and provide a response
-    response = mira.provide_feedback(feedback)
+        # Read the contents of the uploaded file
+        content = file.read().decode('utf-8')
 
-    # Return the response as JSON response
-    return jsonify({'response': response})
+        # Summarize the content
+        summary = summarize_text(content)
 
+        # Render the summarized content on a separate page or display it to the user
+        return render_template('summary_result.html', summary=summary)
+
+    return render_template('upload_file.html')
 @app.route('/check_db')
 def check_db():
     try:
