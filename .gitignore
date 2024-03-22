@@ -1,3 +1,4 @@
 .env
 myenv
 myenv/Lib/site-packages/llvmlite/binding/llvmlite.dll
+".env" 
